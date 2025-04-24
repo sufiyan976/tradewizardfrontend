@@ -29,6 +29,7 @@ import { cn } from "@/lib/utils"
 import { Logo } from "@/components/logo"
 import { MobileNav } from "@/components/mobile-nav"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { usePathname } from "next/navigation"
 
 // Logo component for consistent styling across navigation
 interface SectionLogoProps {
@@ -84,7 +85,7 @@ const INDEX_SYMBOLS = {
 
 export default function Header() {
   // This would typically come from a router in a real app
-  const currentPath = typeof window !== "undefined" ? window.location.pathname : "/"
+  const currentPath = usePathname()
   const [isMediumScreen, setIsMediumScreen] = useState(false)
   const [activeTab, setActiveTab] = useState("gainers")
   const [indexData, setIndexData] = useState<Record<string, StockItem | null>>({
@@ -140,7 +141,7 @@ const [volumeLeaders, setVolumeLeaders] = useState<StockItem[]>([])
 
 const fetchStockLists = async () => {
   try {
-    const res = await fetch("http://localhost:5000/stocks")
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/stocks`)
     const data: StockItem[] = await res.json()
 
     const gainers = data
@@ -312,7 +313,7 @@ useEffect(() => {
 
   const fetchIndices = async () => {
     try {
-      const res = await fetch("http://localhost:5000/stocks")
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/stocks`)
       const data = await res.json()
       const indexData = data.filter(
         (item: StockItem) =>
