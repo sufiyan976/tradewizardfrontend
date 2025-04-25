@@ -76,30 +76,46 @@ export default function IntradayBooster() {
   }
 
   const fetchStocks = async () => {
-    try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/stocks`)
-      const allData: StockItem[] = response.data
-
-      const advanceBuy = allData.filter(
-        (s) => s.side === "advanceBuy" && s.close >= 100 && typeof s.momentumStrength === "number"
-      )
-      const advanceSell = allData.filter(
-        (s) => s.side === "advanceSell" && s.close >= 100 && typeof s.momentumStrength === "number"
-      )
-
-      setAdvanceBuyStocks(advanceBuy)
-      setAdvanceSellStocks(advanceSell)
-
-      const topBuy = [...advanceBuy].sort((a, b) => b.volume - a.volume).slice(0, 15)
-      const topSell = [...advanceSell].sort((a, b) => b.volume - a.volume).slice(0, 15)
-
-      setInitialBuyTop15(topBuy)
-      setInitialSellTop15(topSell)
-
-    } catch (error) {
-      console.error("Error fetching stock data:", error)
+    const baseUrls = [
+      process.env.NEXT_PUBLIC_API_URL_PRIMARY, // Backend A
+      process.env.NEXT_PUBLIC_API_URL_SECONDARY // Backend B
+    ]
+  
+    let success = false
+  
+    for (const baseUrl of baseUrls) {
+      try {
+        const response = await axios.get(`${baseUrl}/stocks`)
+        const allData: StockItem[] = response.data
+  
+        const advanceBuy = allData.filter(
+          (s) => s.side === "advanceBuy" && s.close >= 100 && typeof s.momentumStrength === "number"
+        )
+        const advanceSell = allData.filter(
+          (s) => s.side === "advanceSell" && s.close >= 100 && typeof s.momentumStrength === "number"
+        )
+  
+        setAdvanceBuyStocks(advanceBuy)
+        setAdvanceSellStocks(advanceSell)
+  
+        const topBuy = [...advanceBuy].sort((a, b) => b.volume - a.volume).slice(0, 15)
+        const topSell = [...advanceSell].sort((a, b) => b.volume - a.volume).slice(0, 15)
+  
+        setInitialBuyTop15(topBuy)
+        setInitialSellTop15(topSell)
+  
+        success = true
+        break // Exit loop on success
+      } catch (error) {
+        console.warn(`Failed to fetch from ${baseUrl}:`, error)
+      }
+    }
+  
+    if (!success) {
+      console.error("Error fetching stock data from all sources")
     }
   }
+  
 
   useEffect(() => {
     const sorted =
@@ -153,7 +169,6 @@ export default function IntradayBooster() {
       ? <ChevronUp className="h-4 w-4 ml-1" />
       : <ChevronDown className="h-4 w-4 ml-1" />
   }
-
 
   const renderStockTable = (
     stocks: StockItem[],
@@ -239,8 +254,7 @@ export default function IntradayBooster() {
                 Bullish Stocks
               </CardTitle>
               <Badge variant="outline" className="bg-green-500/10 text-green-500">
-              {displayedBuyStocks.length} Stocks
-
+                {displayedBuyStocks.length} Stocks
               </Badge>
             </div>
             <CardDescription>Stocks showing strong bullish momentum for intraday buying</CardDescription>
@@ -258,8 +272,7 @@ export default function IntradayBooster() {
                 Bearish Stocks
               </CardTitle>
               <Badge variant="outline" className="bg-red-500/10 text-red-500">
-              {displayedSellStocks.length} Stocks
-
+                {displayedSellStocks.length} Stocks
               </Badge>
             </div>
             <CardDescription>Stocks showing strong bearish momentum for intraday selling</CardDescription>
@@ -279,7 +292,7 @@ export default function IntradayBooster() {
         </CardHeader>
         <CardContent>
           <p className="text-sm text-gray-500 dark:text-gray-400">
-          The information provided in the 9:15 Booster is for informational purposes only and should not be considered as financial advice. Trading in financial markets involves risk, and past performance is not indicative of future results. Always conduct your own research and consider your financial situation before making any investment decisions. The buy/sell signals are generated based on technical indicators and may not always be accurate. Use these recommendations at your own risk.
+            The information provided in the 9:15 Booster is for informational purposes only and should not be considered as financial advice. Trading in financial markets involves risk, and past performance is not indicative of future results. Always conduct your own research and consider your financial situation before making any investment decisions. The buy/sell signals are generated based on technical indicators and may not always be accurate. Use these recommendations at your own risk.
           </p>
         </CardContent>
       </Card>
