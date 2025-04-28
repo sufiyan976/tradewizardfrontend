@@ -286,13 +286,13 @@ useEffect(() => {
   const getViewAllLink = () => {
     switch (activeTab) {
       case "gainers":
-        return "https://chartink.com/screener/copy-top-gainers-3782"
+        return "https://chartink.com/screener/copy-top-gainers-3853"
       case "losers":
-        return "https://chartink.com/screener/top-losers-25016"
+        return "https://chartink.com/screener/top-losers-25024"
       case "volume":
-        return "https://chartink.com/screener/copy-strong-volume-gainers-633"
+        return "https://chartink.com/screener/volume-gainer-30145"
       default:
-        return "https://chartink.com/screener/copy-top-gainers-3782"
+        return "https://chartink.com/screener/copy-top-gainers-3853"
     }
   }
 
