@@ -315,7 +315,7 @@ export default function MarketBeatsCombined() {
             {/* External Dashboard Link - Responsive button */}
             <div className="mt-4 sm:mt-6 pt-2 sm:pt-4 flex justify-center">
               <a
-                href="https://chartink.com/dashboard/308741"
+                href="https://chartink.com/dashboard/326074"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1 sm:gap-2 text-primary hover:text-primary/80 transition-colors"
